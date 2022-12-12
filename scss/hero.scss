@@ -1,0 +1,12 @@
+// scss/hero.scss
+
+.hero {
+    @extend .p-5;
+    @extend .d-flex, .flex-wrap, .flex-column, .justify-content-end;
+    position: relative;
+    height: 32rem !important;
+
+    h2 {
+        @extend .display-1;
+    }
+}

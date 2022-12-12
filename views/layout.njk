@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link rel="stylesheet" href="/stylesheets/index.css" />
+
+    <title>{{ title | default("Hello, World!") }}</title>
+  </head>
+  <body>
+    {% include("navbar.njk") %}
+    <div class="content bg-dark text-white">
+      {% block body %}{% endblock %}
+    </div>
+
+    {% block javascripts %}{% endblock %}
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

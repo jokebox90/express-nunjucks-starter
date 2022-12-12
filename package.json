@@ -1,0 +1,22 @@
+{
+  "name": "minisite",
+  "version": "1.0.0",
+  "main": "./bin/www",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon .",
+    "sass": "sass --watch scss/index.scss public/stylesheets/index.css"
+  },
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "cookie-parser": "^1.4.6",
+    "debug": "^4.3.4",
+    "express": "^4.18.2",
+    "http-errors": "^2.0.0",
+    "morgan": "^1.10.0",
+    "nunjucks": "^3.2.3",
+    "popper": "^1.0.1",
+    "sass": "^1.56.2"
+  }
+}

@@ -1,0 +1,185 @@
+{% extends "layout.njk" %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+  function initializeScrollRecording() {
+    window.addEventListener("scroll", onPageScroll);
+    window.addEventListener("resize", () => {
+      d3.select(".timeline-container").html("");
+      initializeTimeline();
+      onPageScroll();
+    });
+  }
+
+  function initializeTimeline() {
+    const timeline = d3.select(".timeline");
+    const timelineRows = timeline.selectAll(".timeline-row");
+    const timelineContainer = d3.select(".timeline-container");
+    const timelineDisposition = timelineContainer.node().getBoundingClientRect();
+    const isDesktop = timelineDisposition.width < 400 ? false : true;
+    const posX = isDesktop ? "50%" : "15px";
+
+    timeline
+      .classed("container", true)
+      .classed("position-relative", true);
+
+    timelineContainer
+      .classed("w-100", true)
+      .classed("h-100", true)
+      .classed("position-absolute", true);
+
+    const svg = timelineContainer
+      .append("svg")
+      .attr("height", "100%")
+      .attr("width", "100%");
+
+    const background = svg.append("line");
+    const foreground = svg.append("line");
+    const head = svg.append("circle");
+
+    timelineRows.each((el, index, nodes) => {
+      const row = d3.select(nodes[index]);
+      const col = row.selectAll(".timeline-col");
+      const node = col.node();
+      const disp = node.getBoundingClientRect();
+      const circleY = node.offsetTop + disp.height + 48;
+      const doIt = index % 2 === 0 || !isDesktop;
+
+      row.classed("row", true);
+
+      col
+        .classed(isDesktop ? "col-5" : "col-9", true)
+        .classed("d-flex", true)
+        .classed("flex-wrap", true)
+        .classed("flex-column", true)
+        .classed("justify-content-center", true)
+        .classed("bg-light", true)
+        .classed("text-dark", true)
+        .classed("ms-auto", isDesktop && index % 2 === 0)
+        .classed("mx-auto", !isDesktop)
+        .classed("my-5", true)
+        .style("min-height", "6rem");
+
+      isDesktop && svg
+        .append("circle")
+        .classed(`timeline-step-${index}`, true)
+        .style("fill", "#ccc")
+        .attr("cx", posX)
+        .attr("cy", `${circleY}px`)
+        .attr("r", "20px");
+    });
+
+    background
+      .classed("timeline-background", true)
+      .attr("x1", posX)
+      .attr("y1", "0%")
+      .attr("x2", posX)
+      .attr("y2", "100%")
+      .attr("stroke", "#666")
+      .attr("stroke-width", "15px");
+
+    foreground
+      .classed("timeline-foreground", true)
+      .attr("x1", posX)
+      .attr("y1", "0%")
+      .attr("x2", posX)
+      .attr("y2", "0%")
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", "25px");
+
+    head
+      .classed("timeline-head", true)
+      .style("fill", "#ccc")
+      .attr("cx", posX)
+      .attr("cy", "0%")
+      .attr("r", "15px");
+  }
+
+  function onPageScroll() {
+    const timelineContainer = d3.select(".timeline-container");
+    const timelineContainerHeight = timelineContainer.node().getBoundingClientRect().height;
+    const scrollPercent = getScrollPercent();
+    const viewPosition = getViewPosition();
+    const containerPosition = getContainerPosition();
+    const t = d3.transition().duration(500).ease(d3.easeLinear);
+    const t2 = d3.transition().delay(250).duration(500).ease(d3.easeLinear);
+    const cols = d3.selectAll(".timeline-col");
+
+    timelineContainer
+      .select(".timeline-foreground")
+      .transition(t)
+      .attr(
+        "y2",
+        (scrollPercent > 98 ? timelineContainerHeight : containerPosition) + "px"
+      );
+
+    timelineContainer
+      .select(".timeline-head")
+      .transition(t)
+      .attr(
+        "cy",
+        (scrollPercent > 98 ? timelineContainerHeight : containerPosition) + "px"
+      );
+
+    cols.each((element, index, nodes) => {
+      const col = d3.select(nodes[index]);
+      const node = col.node();
+      const disp = node.getBoundingClientRect();
+      const level = Math.round(node.offsetTop + disp.height / 2);
+      const circle = timelineContainer.select(`.timeline-step-${index}`).transition(t2);
+      const doIt = scrollPercent > 98 || containerPosition > level;
+
+      circle
+        .style("fill", doIt ? "#ccc" : "#666")
+        .attr("r", doIt ? "20px" : "15px");
+    });
+  }
+
+  function getViewPosition() {
+    const html = document.documentElement;
+
+    return Math.round(
+      html.scrollTop + (html.clientHeight || window.innerHeight) / 3
+    );
+  }
+
+  function getContainerPosition() {
+    const html = document.documentElement;
+    const timelineContainer = d3.select(".timeline-container");
+    const timelinetimelineDisposition = timelineContainer.node().getBoundingClientRect();
+
+    return -Math.round(
+      timelinetimelineDisposition.top - (html.clientHeight / 2)
+    );
+  }
+
+  function getScrollPercent() {
+    const html = document.documentElement;
+
+    return Math.round(
+      (html.scrollTop /
+        (html.scrollHeight - html.clientHeight || window.innerHeight)) *
+        100
+    );
+  }
+
+  initializeTimeline();
+  initializeScrollRecording();
+  onPageScroll();
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="hero bg-light">
+    <div class="hero-body">
+      <h2>{{ title }}</h2>
+    </div>
+  </div>
+  <div class="timeline mt-5">
+    <div class="timeline-container"></div>
+    {% include("basic-content.njk") %}
+  </div>
+</div>
+{% endblock %}
