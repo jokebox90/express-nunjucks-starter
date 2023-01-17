@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
       res.render(
         "customers.njk",
         {
-          title: "Customer, bonjour!",
+          title: "Bonjour, voici la liste des clients !",
           customers: result,
         }
       );

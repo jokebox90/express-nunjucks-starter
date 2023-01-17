@@ -1,8 +1,8 @@
 const { MongoClient } = require("mongodb");
 const connectionString = "mongodb://127.0.0.1:27017/mydb";
 const client = new MongoClient(connectionString, {
-  // useNewUrlParser: true,
-  // useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 let dbConnection;

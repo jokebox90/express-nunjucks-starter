@@ -1,8 +1,12 @@
 <div class="row">
   <div class="col">
     <h2>{{ title }}</h2>
-    <pre>
-      {{ customers | dump }}
-    </pre>
+    <ul>
+      {% for customer in customers %}
+        <li>{{ customer.name }} // {{ customer.address }}</li>
+      {% else %}
+        <li>La liste des clients est vide pour l'instant.</li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
